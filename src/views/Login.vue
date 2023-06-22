@@ -2,7 +2,7 @@
   <div class="loginbody">
     <div class="logindata">
       <div class="logintext">
-        <h2>物流管理系统</h2>
+        <h2>共享单车管理系统</h2>
       </div>
       <div class="formdata">
         <el-form ref="form" :model="form" :rules="rules1">
@@ -157,8 +157,7 @@ export default {
                 message:"登录成功"
               })
               localStorage.setItem("user",JSON.stringify(res.data))
-              localStorage.setItem("menu",JSON.stringify(res.data.menu))
-              setRoutes()
+              //localStorage.setItem("menu",JSON.stringify(res.data.menu))
               this.$router.push('/')
             }
             else {

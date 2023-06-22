@@ -7,7 +7,7 @@
         style="min-height: calc(100vh - 50px)"
     >
 
-      <div v-for="item in menu" :key="item.id">
+<!--      <div v-for="item in menu" :key="item.id">
         <div v-if="!item.path">
           <el-sub-menu :index="item.id+''">
             <template #title>
@@ -22,31 +22,69 @@
           </el-sub-menu>
         </div>
 
-      </div>
+      </div>-->
 
 
-<!--      <el-sub-menu index="2">
+      <el-sub-menu index="1">
         <template #title>
           <el-icon><user/></el-icon>
-          <span>员工管理</span>
+          <span>个人中心</span>
         </template>
         <el-menu-item-group >
-          <el-menu-item index="/staffInfo" >员工信息</el-menu-item>
-          <el-menu-item index="/staff">员工管理</el-menu-item>
+          <el-menu-item index="/home" >
+            <el-icon><HomeFilled /></el-icon>
+            <span>主页</span>
+          </el-menu-item>
+          <el-menu-item index="/admin">
+            <el-icon><UserFilled /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
         </el-menu-item-group>
+      </el-sub-menu>
+
+      <el-sub-menu index="2">
+        <template #title>
+          <el-icon><Bicycle /></el-icon>
+          <span>单车管理</span>
+        </template>
+        <el-menu-item-group >
+          <el-menu-item index="/vehicle" >
+            <el-icon><Place /></el-icon>
+            <span>车辆管理</span>
+          </el-menu-item>
+          <el-menu-item index="/fence" >
+            <el-icon><Coordinate /></el-icon>
+            <span>围栏管理</span>
+          </el-menu-item>
+          <el-menu-item index="/vehicleUsage">
+            <el-icon><Timer /></el-icon>
+            <span>车辆使用记录</span>
+          </el-menu-item>
+          <el-menu-item index="/repairManagement">
+            <el-icon><Guide /></el-icon>
+            <span>车辆维修记录</span>
+          </el-menu-item>
+          <el-menu-item index="/vehiclePredict">
+            <el-icon><AddLocation /></el-icon>
+            <span>车辆投放预测</span>
+          </el-menu-item>
+        </el-menu-item-group>
+
       </el-sub-menu>
 
       <el-sub-menu index="3">
         <template #title>
-          <el-icon><setting /></el-icon>
-          <span>货物管理</span>
+          <el-icon><location /></el-icon>
+          <span>地图管理</span>
         </template>
         <el-menu-item-group >
-          <el-menu-item index="/item" >货物揽收</el-menu-item>
-          <el-menu-item index="/order">货物运输</el-menu-item>
-          <el-menu-item index="/sign">货物签收</el-menu-item>
+          <el-menu-item index="/map" >
+            <el-icon><Promotion /></el-icon>
+            <span>地图管理</span>
+          </el-menu-item>
+
         </el-menu-item-group>
-      </el-sub-menu>-->
+      </el-sub-menu>
     </el-menu>
   </div>
 </template>
@@ -60,7 +98,18 @@ import {
   User,
   UserFilled,
 } from '@element-plus/icons-vue'
-import {SortUp} from "@element-plus/icons";
+import {
+  AddLocation,
+  Bicycle,
+  Coordinate,
+  Guide,
+  HomeFilled,
+  Place,
+  Promotion,
+  SortUp,
+  Timer
+} from "@element-plus/icons";
+
 
 
 
@@ -74,13 +123,19 @@ export default {
     Location,
     Document,
     User,
-
-
+    Bicycle,
+    Place,
+    Coordinate,
+    Timer,
+    Guide,
+    AddLocation,
+    HomeFilled,
+    Promotion,
   },
   data(){
     return{
       path:this.$route.path,
-      menu:localStorage.getItem("menu") ? JSON.parse(localStorage.getItem("menu")) : [],
+      //menu:localStorage.getItem("menu") ? JSON.parse(localStorage.getItem("menu")) : [],
     }
   }
 }

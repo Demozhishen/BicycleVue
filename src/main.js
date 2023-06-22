@@ -10,7 +10,7 @@ import 'element-plus/dist/index.css'
 import '@/assets/css/global.css'
 import 'dayjs/locale/zh-cn'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-
+import BaiduMap from 'vue-baidu-map'
 
 
 createApp(App).use(store).use(router).use(ElementPlusIconsVue).use(ElementPlus, {
@@ -32,4 +32,10 @@ router.beforeEach((to, from, next) => {
         }
     }
 )
+
+
+const app = createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
 

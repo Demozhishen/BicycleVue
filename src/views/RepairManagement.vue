@@ -11,7 +11,7 @@
     </div>-->
 
     <div style="margin: 10px">
-      <el-input v-model="search" placeholder="请输入姓名" style="width:200px" clearable/>
+      <el-input v-model="search" placeholder="请输入车辆状态" style="width:200px" clearable/>
       <el-button type="primary" style="margin-left: 5px" @click="load">查询</el-button>
     </div>
 
@@ -20,9 +20,7 @@
 
 
     <div style="margin: 10px">
-      <el-button type="primary" @click="add">新增<i class="el-icon-plus"></i></el-button>
-<!--      <el-button type="danger">批量删除 <i class="el-icon-remove-outline"></i></el-button>
-      <el-button type="primary">导入 <i class="el-icon-bottom"></i></el-button>-->
+
       <el-button type="primary" @click="exp">导出 <i class="el-icon-top"></i></el-button>
 
     </div>
@@ -32,20 +30,17 @@
 
 
     <el-table :data="tableData" border stripe  style="width: 100%" >
-      <el-table-column prop="userId" label="用户编号" sortable width="110" />
-      <el-table-column prop="username" label="用户名"  />
-      <el-table-column prop="password" label="密码" />
-      <el-table-column prop="fullName" label="姓名"   />
-      <el-table-column prop="sex" label="性别" width="100"/>
-      <el-table-column prop="phoneNumber" label="电话" />
-      <el-table-column prop="address" label="地址" />
-      <el-table-column prop="email" label="邮箱" />
+      <el-table-column prop="repairId" label="检修ID" sortable width="130" />
+      <el-table-column prop="bikeId" label="车辆ID" width="130" />
+      <el-table-column prop="startTime" label="开始时间" />
+      <el-table-column prop="endTime" label="结束时间"   />
+      <el-table-column prop="description" label="检修描述" />
       <el-table-column fixed="right" label="Operations" >
         <template #default="scope">
-        <el-button type="success" @click="handleEdit(scope.row)" >编辑</el-button>
-          <el-popconfirm title="确认删除？" @confirm="handleDelete(scope.row.userId)">
+        <el-button type="info" @click="handleFinish(scope.row)" round  v-if="!scope.row.endTime">维修完成</el-button>
+          <el-popconfirm title="确认删除？" @confirm="handleDelete(scope.row.repairId)">
             <template #reference>
-              <el-button type="danger">删除 </el-button>
+              <el-button type="danger" round>删除 </el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -66,40 +61,34 @@
 
     <el-dialog
         v-model="dialogVisible"
-        title="新增用户"
+        title="新增车辆"
         width="30%"
     >
       <el-form :model="form" label-width="120px">
-        <el-form-item label="用户名">
-          <el-input v-model="form.username"></el-input>
+        <el-form-item label="车辆编号">
+          <el-input v-model="form.id" disabled></el-input>
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="form.password"></el-input>
+        <el-form-item label="车辆X坐标" >
+          <el-input v-model="form.xcoordinate"></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model="form.fullName"></el-input>
+        <el-form-item label="车辆Y坐标">
+          <el-input v-model="form.ycoordinate"></el-input>
         </el-form-item>
-
-        <el-form-item label="性别">
-          <el-radio v-model="form.sex" label="男">男</el-radio>
-          <el-radio v-model="form.sex" label="女">女</el-radio>
-          <el-radio v-model="form.sex" label="未知">未知</el-radio>
+        <el-form-item label="车辆状态">
+          <el-radio v-model="form.status" label="使用中">使用中</el-radio>
+          <el-radio v-model="form.status" label="空闲中">空闲中</el-radio>
+          <el-radio v-model="form.status" label="维修中">维修中</el-radio>
+          <el-radio v-model="form.status" label="已损坏">已损坏</el-radio>
         </el-form-item>
-        <el-form-item label="电话">
-          <el-input v-model="form.phoneNumber"></el-input>
-        </el-form-item>
-        <el-form-item label="地址">
-          <el-input v-model="form.address"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email"></el-input>
+        <el-form-item label="蓝牙ID">
+          <el-input v-model="form.bluetoothId"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="save">
-          Confirm
+          确认
         </el-button>
       </span>
       </template>
@@ -135,17 +124,14 @@ export default {
   },
   methods:{
     load(){
-       request.get("http://localhost:8081/user", {
+       request.get("/repairManagement", {
          params:{
            pageNum:this.currentPage,
            pageSize:this.pageSize,
            search:this.search
          }
        }).then(res=>{
-         if(res.code==="401")
-         {
-           //this.$router.push('/404')
-         }
+
          console.log(res)
          console.log(this.search)
          this.tableData=res.data.records
@@ -153,18 +139,14 @@ export default {
        })
     },
     exp(){
-      window.open("http://localhost:8081/user/export")
+      window.open("/repairManagement/export")
     },
 
-    add(){
-      this.dialogVisible=true
-      this.form={}
-    },
     save(){
       console.log(this.form.id)
-      if(this.form.userId)
+      if(this.form.id)
       {
-        request.put("http://localhost:8081/user",this.form).then(res=>{
+        request.put("/repairManagement",this.form).then(res=>{
 
           if(res.code==='0')
           {
@@ -185,7 +167,7 @@ export default {
         })
       }else
         {
-          request.post("http://localhost:8081/user", this.form).then(res => {
+          request.post("/repairManagement", this.form).then(res => {
             console.log(res)
             this.$message({
               type:"success",
@@ -198,10 +180,16 @@ export default {
       this.dialogVisible=false
     },
 
-    handleEdit(row){
-      this.form=JSON.parse(JSON.stringify(row))
-      this.dialogVisible=true
-      console.log(this.form.userId)
+
+    handleFinish(row){
+      this.form=row;
+      request.put("/repairManagement",this.form).then(res=>{
+        this.$message({
+          type:"success",
+          message:"检修完成"
+        })
+        this.load()
+      })
     },
 
     handleSizeChange(pageSize){
@@ -214,7 +202,7 @@ export default {
     },
     handleDelete(id){
       console.log(id)
-      request.delete("http://localhost:8081/user/"+id).then(res=>{
+      request.delete("/repairManagement/"+id).then(res=>{
         if(res.code==='0')
         {
           this.$message({

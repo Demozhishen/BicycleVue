@@ -11,7 +11,7 @@
         </div>-->
 
     <div style="margin: 10px">
-      <el-input v-model="search" placeholder="请输入姓名" style="width:200px" clearable/>
+      <el-input v-model="search" placeholder="请输入车辆ID" style="width:200px" clearable/>
       <el-button type="primary" style="margin-left: 5px" @click="load">查询</el-button>
     </div>
 
@@ -20,8 +20,9 @@
 
 
     <div style="margin: 10px">
-      <el-button type="primary" @click="add">新增</el-button>
+<!--      <el-button type="primary" @click="add" v-if="!role">新增</el-button>-->
 
+      <el-button type="primary" @click="exp" v-if="role">导出 <i class="el-icon-top"></i></el-button>
       <el-button type="primary" @click="exp">导出 <i class="el-icon-top"></i></el-button>
 
     </div>
@@ -31,18 +32,42 @@
 
 
     <el-table :data="tableData" border stripe  style="width: 100%" >
-      <el-table-column prop="employeeId" label="员工编号" sortable />
-      <el-table-column prop="employeePassword" label="密码" />
-      <el-table-column prop="employeeName" label="姓名"   />
-      <el-table-column prop="employeeIdCard" label="身份证" />
-      <el-table-column prop="employeePhone" label="电话" />
-      <el-table-column prop="employeeAddress" label="地址" />
+      <el-table-column prop="recordId" label="使用记录ID" sortable width="130" />
+      <el-table-column prop="vehicleId" label="车辆ID" width="110"/>
+      <el-table-column prop="fenceId" label="围栏ID" width="110"/>
+      <el-table-column label="开始时间" >
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover" placement="top" width="auto">
+            <template #default>
+              <div>PointX: {{ scope.row.startX}}</div>
+              <div>PointY: {{ scope.row.startY}}</div>
+            </template>
+            <template #reference>
+              <el-tag type="info">{{scope.row.startTime}}</el-tag>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column label="结束时间" >
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover" placement="top" width="auto">
+            <template #default>
+              <div>PointX: {{ scope.row.endX}}</div>
+              <div>PointY: {{ scope.row.endY}}</div>
+            </template>
+            <template #reference>
+              <el-tag type="info">{{scope.row.endTime}}</el-tag>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column prop="distance" label="距离" />
       <el-table-column fixed="right" label="Operations" >
         <template #default="scope">
-          <el-button type="success" @click="handleEdit(scope.row)" >编辑</el-button>
-          <el-popconfirm title="确认删除？" @confirm="handleDelete(scope.row.employeeId)">
+          <el-button type="success" @click="handleEdit(scope.row)" round disabled>编辑</el-button>
+          <el-popconfirm title="确认删除？" @confirm="handleDelete(scope.row.recordId)">
             <template #reference>
-              <el-button type="danger">删除 </el-button>
+              <el-button type="danger" round>删除 </el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -63,33 +88,32 @@
 
     <el-dialog
         v-model="dialogVisible"
-        title="新增员工"
+        title="新增使用记录"
         width="30%"
     >
       <el-form :model="form" label-width="120px">
 
-        <el-form-item label="密码">
-          <el-input v-model="form.employeeId"></el-input>
+        <el-form-item label="车辆编号">
+          <el-input v-model="form.vehicleId"></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model="form.employeeName"></el-input>
+        <el-form-item label="开始时间">
+          <el-date-picker v-model="form.startTime" type="datetime" placeholder="选择日期时间" value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="身份证">
-          <el-input v-model="form.employeeIdCard"></el-input>
+        <el-form-item label="结束时间">
+          <el-date-picker v-model="form.endTime" type="datetime" placeholder="选择日期时间" value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="电话">
-          <el-input v-model="form.employeePhone"></el-input>
-        </el-form-item>
-        <el-form-item label="地址">
-          <el-input v-model="form.employeeAddress"></el-input>
+        <el-form-item label="距离">
+          <el-input v-model="form.distance"></el-input>
         </el-form-item>
 
       </el-form>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="save">
-          Confirm
+          添加
         </el-button>
       </span>
       </template>
@@ -102,10 +126,11 @@
 
 
 
+
 import request from "@/utils/request";
 
 export default {
-  name: 'staff',
+  name: 'item',
   components: {
 
   },
@@ -115,9 +140,11 @@ export default {
       dialogVisible:false,
       total:10,
       currentPage:1,
-      pageSize:10,
+      pageSize:5,
       search:'',
-      tableData:[]
+      tableData:[],
+      test:{},
+      role:false,
     }
   },
   created() {
@@ -125,15 +152,17 @@ export default {
   },
   methods:{
     load(){
-      request.get("/staff", {
+      this.form = JSON.parse( localStorage.getItem("user"));
+      console.log(this.form)
+      request.get("/vehicleUsage",{
         params:{
           pageNum:this.currentPage,
           pageSize:this.pageSize,
-          search:this.search
-        }
+          search:this.search,
+        },
+
       }).then(res=>{
-        console.log(res)
-        console.log(this.search)
+        console.log(localStorage.getItem("user"))
         this.tableData=res.data.records
         this.total=res.data.total
       })
@@ -144,31 +173,8 @@ export default {
       this.form={}
     },
     save(){
-      console.log(this.form.id)
-      if(this.form.employeeId)
-      {
-        request.put("/staff",this.form).then(res=>{
 
-          if(res.code==='0')
-          {
-            this.$message({
-              type:"success",
-              message:"修改成功"
-            })
-          }
-          else {
-            this.$message({
-              type:"error",
-              message: res.msg
-            })
-          }
-
-
-          this.load()
-        })
-      }else
-      {
-        request.post("/staff", this.form).then(res => {
+        request.post("/vehicleUsage", this.form).then(res => {
           console.log(res)
           this.$message({
             type:"success",
@@ -176,17 +182,16 @@ export default {
           })
           this.load();
         })
-      }
+
 
       this.dialogVisible=false
     },
   exp(){
-      window.open("http://localhost:8081/staff/export")
+      window.open("/vehicleUsage/export")
   },
     handleEdit(row){
       this.form=JSON.parse(JSON.stringify(row))
       this.dialogVisible=true
-      console.log(this.form.employeeId)
     },
 
     handleSizeChange(pageSize){
@@ -199,7 +204,7 @@ export default {
     },
     handleDelete(id){
       console.log(id)
-      request.delete("/staff/"+id).then(res=>{
+      request.delete("/vehicleUsage/"+id).then(res=>{
         if(res.code==='0')
         {
           this.$message({
@@ -222,7 +227,5 @@ export default {
 
 
 <style>
-.headerBg {
-  background: #eee!important;
-}
+
 </style>

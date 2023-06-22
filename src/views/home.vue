@@ -1,34 +1,44 @@
-<template xmlns="http://www.w3.org/1999/html">
-  <div style="font-family: 'Arial', sans-serif; font-size: 15px; color: black; width: 100%"  >
-   <br> <br>
-    Welcome to the Logistics Management System
-    <el-divider></el-divider>
-    功能介绍
-    <el-divider></el-divider>
-    <div style="color: cadetblue">普通用户:可以进行货物提交或取消，以及货物签收，可以进行个人信息修改，账号自行注册，只能查看自己添加的货物的信息</div>
-    <el-divider></el-divider>
-    <div style="color: burlywood"> 员工：可以进行货物揽收，个人信息修改，账号必须由管理员添加，无法注册，可以查看所有待揽收的货物，只能查看自己揽收的订单</div>
-    <el-divider></el-divider>
-    <div style="color: red"> 管理员：可以管理普通用户和员工的一切信息，可以查看所有货物派送信息</div>
-    <el-divider></el-divider>
-    <div style="color: blue">超级管理员账号为 88888888888 & 123</div>
+<template>
+  <div class="block text-center" style="width: 100%;height: 100%;margin-top: 20px" >
 
+    <el-carousel height="720px" style="width: 100%">
+      <el-carousel-item v-for="item in 4" :key="item" >
+        <img class="p1" src="../assets/3.jpg"  v-show="item===2">
+        <img class="p2" src="../assets/2.jpeg"  v-show="item===1">
+        <img class="p3" src="../assets/4.jpg"  v-show="item===3">
+        <img class="p2" src="../assets/2.jpeg"  v-show="item===4">
+      </el-carousel-item>
+    </el-carousel>
   </div>
 
 </template>
 
-<script>
-import {setRoutes} from "@/router";
-
-export default {
-
-  created() {
-    setRoutes();
-
-  }
-}
-</script>
-
 <style scoped>
+
+
+.p2 {
+  color: #475669;
+  opacity: 0.70;
+  line-height: 150px;
+  text-align: center;
+  margin-left: 350px;
+}
+.p1{
+  opacity: 0.90;
+  line-height: 150px;
+  text-align: center;
+  margin-left: 90px;
+  width: 90%;
+  height: 90%;
+}
+.p3{
+  opacity: 0.90;
+  line-height: 150px;
+  text-align: center;
+  margin-left: 280px;
+  width: 1080px;
+  height: 719px;
+}
+
 
 </style>

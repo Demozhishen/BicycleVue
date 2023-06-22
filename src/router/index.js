@@ -2,57 +2,61 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Login from "@/views/Login";
 import Layout from "@/layout/Layout";
-import Person from "@/views/person";
-import User from "@/views/user";
+import Vehicle from "@/views/vehicle";
 
 
 const routes = [
-/*  {
+  {
     path: '/',
     name: 'layout',
     component: Layout,
-    redirect:"/test",
+    redirect:"/vehicle",
     children:[
       {
-        path: '/user',
-        name: 'user',
-        component: User,
+        path: '/vehicle',
+        name: 'vehicle',
+        component: Vehicle,
 
       },
       {
-        path: '/person',
-        name: 'person',
-        component: Person,
+        path: '/fence',
+        name: 'fence',
+        component: ()=>import("@/views/fence"),
       },
       {
-        path: '/staffInfo',
-        name: 'staffInfo',
-        component: ()=>import("@/views/staffInfo")
+        path: '/repairManagement',
+        name: 'repairManagement',
+        component: ()=>import("@/views/RepairManagement")
       },
       {
-        path: '/staff',
-        name: 'staff',
-        component: ()=>import("@/views/staff")
+        path: '/vehicleUsage',
+        name: 'vehicleUsage',
+        component: ()=>import("@/views/vehicleUsage")
       },
       {
-        path: '/item',
-        name: 'item',
-        component: ()=>import('@/views/item')
+        path: '/home',
+        name: 'home',
+        component: ()=>import("@/views/home")
       },
       {
-        path: '/order',
-        name: 'order',
-        component: ()=>import('../views/order')
+        path: '/admin',
+        name: 'admin',
+        component: ()=>import("@/views/admin")
       },
       {
-        path: '/sign',
-        name: 'sign',
-        component: ()=>import('@/views/sign')
+        path: '/map',
+        name: 'map',
+        component: ()=>import("@/views/map")
+      },
+      {
+        path: '/vehiclePredict',
+        name: 'vehiclePredict',
+        component: ()=>import("@/views/vehiclePredict")
       },
 
 
     ]
-  },*/
+  },
   {
     path: '/login',
     name: 'login',
@@ -72,7 +76,7 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-// 注意：刷新页面会导致页面路由重置
+/*// 注意：刷新页面会导致页面路由重置
 export const setRoutes = () => {
   const storeMenus = localStorage.getItem("menu");
   if (storeMenus) {
@@ -105,7 +109,7 @@ export const setRoutes = () => {
   }
 }
 
-setRoutes();
+setRoutes();*/
 
 
 
